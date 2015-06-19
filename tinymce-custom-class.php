@@ -18,6 +18,8 @@ class TinyMCE_Custom_Class {
  
  		if ( is_admin() ) {
 		    add_action( 'init', array( &$this, 'setup_tinymce_plugin' ) );
+		    add_action( 'admin_enqueue_scripts', array( &$this, 'admin_scripts_css' ) );
+		    add_action( 'admin_print_footer_scripts', array( &$this, 'admin_footer_scripts' ) );
 		}
 
     }
@@ -72,6 +74,47 @@ class TinyMCE_Custom_Class {
 	    return $buttons;
 	 
 	}
+
+	/**
+	* Enqueues CSS for TinyMCE Dashicons
+	*/
+	function admin_scripts_css() {
+
+		wp_enqueue_style( 'tinymce-custom-class', plugins_url( 'tinymce-custom-class.css', __FILE__ ) );
+
+	}
+
+/**
+* Adds the Custom Class button to the Quicktags (Text) toolbar of the content editor
+*/
+function admin_footer_scripts() {
+
+	// Check the Quicktags script is in use
+	if ( ! wp_script_is( 'quicktags' ) ) {
+		return;
+	}
+	?>
+	<script type="text/javascript">
+		QTags.addButton( 'custom_class', 'Insert Custom Class', insert_custom_class );
+		function insert_custom_class() {
+		    // Ask the user to enter a CSS class
+		    var result = prompt('Enter the CSS class');
+		    if ( !result ) {
+		        // User cancelled - exit
+		        return;
+		    }
+		    if (result.length === 0) {
+		        // User didn't enter anything - exit
+		        return;
+		    }
+
+		    // Insert
+		    QTags.insertContent('<span class="' + result +'"></span>');
+		}
+	</script>
+	<?php
+
+}
  
 }
  

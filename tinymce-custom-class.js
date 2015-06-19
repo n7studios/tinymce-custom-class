@@ -4,7 +4,7 @@
         editor.addButton('custom_class', {
             title: 'Insert CSS Class',
             cmd: 'custom_class',
-            image: url + '/icon.png',
+            icon: 'icon dashicons-wordpress',
         });
  
         // Add Command when Button Clicked
@@ -31,6 +31,21 @@
 
             // Insert selected text back into editor, wrapping it in an anchor tag
             editor.execCommand('mceReplaceContent', false, '<span class="' + result + '">' + text + '</span>');
+        });
+
+        // Enable/disable the button on the node change event
+        editor.onNodeChange.add(function( editor ) {
+            // Get selected text, and assume we'll disable our button
+            var selection = editor.selection.getContent();
+            var disable = true;
+
+            // If we have some text selected, don't disable the button
+            if ( selection ) {
+                disable = false;
+            }
+
+            // Define whether our button should be enabled or disabled
+            editor.controlManager.setDisabled( 'custom_class', disable );
         });
     });
 })();
